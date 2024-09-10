@@ -1,0 +1,41 @@
+body {
+    background-color: #f5f5dc; /* Warna krem */
+    font-family: Arial, sans-serif;
+}
+h1 {
+    text-align: center;
+}
+.custom-table {
+    border: 1px solid #ddd; /* Border untuk seluruh tabel */
+}
+
+.custom-table th, .custom-table td {
+    padding: 10px; /* Memberi ruang dalam sel */
+    text-align: center; /* Pusatkan teks dalam sel */
+    border: 1px solid #ccc; /* Border di setiap sel */
+}
+
+.custom-table th {
+    background-color: #2b5f92; /* Warna latar belakang untuk header */
+    font-weight: bold;
+}
+
+.custom-table tr:nth-child(even) {
+    background-color: #2b5f92; /* Warna latar belakang untuk baris genap */
+}
+
+.custom-table .btn {
+    margin-right: 5px; /* Jarak antar tombol */
+}
+
+.table-bordered {
+    border: 1px solid #ddd; /* Border utama tabel */
+}
+
+.table-bordered td, .table-bordered th {
+    border: 1px solid #ddd; /* Border di dalam sel */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.05); /* Warna latar belakang baris ganjil */
+}
