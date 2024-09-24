@@ -3,6 +3,11 @@
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\BukuController;
+
+
+
+
 Route::resource('products', ProductController::class);
 
 
@@ -65,4 +70,12 @@ Route::get('/layout', function () {
 });
 
 Route::get('/posts', [PostController::class, 'index']);
+
 Route::get('/products', [ProductController::class, 'index'])->name('index');
+
+Route::get('/buku', [BukuController::class, 'index']);
+Route::get('/buku/create',[BukuController::class, 'create'])->name('buku.create');
+Route::post('/buku',[BukuController::class, 'store'])->name('buku.store');
+Route::delete('/buku/{id}',[BukuController::class, 'destroy'])->name('buku.destroy');
+Route::get('/buku/{id}/edit', [BukuController::class, 'edit'])->name('buku.edit');
+Route::post('/buku/{id}', [BukuController::class, 'update'])->name('buku.update');
