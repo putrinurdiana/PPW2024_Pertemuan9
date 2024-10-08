@@ -35,7 +35,9 @@ class BukuController extends Controller
         return redirect('/buku');
     }
     public function edit($id) {
+        // menggunakan model bukuk mencari kolom di database yang memiliki id sesuai dengan nilai $id
         $buku = Buku::find($id);
+        // fungsi compact untuk mengirim data buku ke view
         return view('/buku.edit', compact('buku'));
     }
     public function update(Request $request, $id) {
@@ -46,7 +48,7 @@ class BukuController extends Controller
         $buku->penulis = $request->penulis;
         $buku->harga = $request->harga;
         $buku->tgl_terbit = $request->tgl_terbit;
-
+ 
         $buku->save();
 
         return redirect('/buku');
