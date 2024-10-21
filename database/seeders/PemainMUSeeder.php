@@ -6,7 +6,7 @@ use App\Models\pemainmu;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class PemainMU extends Seeder
+class PemainMUSeeder extends Seeder
 {
     /**
      * Run the database seeds.

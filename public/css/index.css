@@ -14,7 +14,7 @@ table {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-thead th {
+.table thead th {
     background-color: #007bff;
     color: white;
     padding: 10px;
@@ -22,17 +22,13 @@ thead th {
     font-size: 16px;
 }
 
-tbody td {
+.table tbody td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
 }
 
-tr:hover {
-    background-color: #f1f1f1;
-}
-
 table td{
-    text-align: left;
+    text-align: center;
     padding: 12px 15px;
 }
 table th {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
@@ -22,9 +23,9 @@ Route::resource('products', ProductController::class);
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Route::get('/about', function () {
 //     return view('about', [
@@ -73,9 +74,15 @@ Route::get('/posts', [PostController::class, 'index']);
 
 Route::get('/products', [ProductController::class, 'index'])->name('index');
 
-Route::get('/buku', [BukuController::class, 'index']);
-Route::get('/buku/create',[BukuController::class, 'create'])->name('buku.create');
-Route::post('/buku',[BukuController::class, 'store'])->name('buku.store');
-Route::delete('/buku/{id}',[BukuController::class, 'destroy'])->name('buku.destroy');
-Route::get('/buku/{id}/edit', [BukuController::class, 'edit'])->name('buku.edit');
-Route::post('/buku/{id}', [BukuController::class, 'update'])->name('buku.update');
+Route::controller(LoginRegisterController::class)->group(function() {
+    Route::get('/login', 'login')->name('login');
+    Route::post('/authenticate', 'authenticate')->name('authenticate');
+    Route::get('/register', 'register')->name('register');
+    Route::post('/store', 'store')->name('store');
+    Route::get('/dashboard', 'dashboard')->name('dashboard');
+    Route::post('/logout', 'logout')->name('logout');
+});
+
+Route::middleware('auth')->group(function() {
+    Route::resource('/buku', BukuController::class);
+});
