@@ -15,6 +15,7 @@ class LoginRegisterController extends Controller
     {
         // Apply guest middleware to all methods except logout and dashboard
         $this->middleware('guest')->except(['logout', 'dashboard']);
+
     }
 
     // Show the registration form

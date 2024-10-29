@@ -8,6 +8,10 @@ use App\Models\Buku;
 
 class BukuController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
     public function index (){
         $data_buku = Buku::all();
         // Kirim data ke view
