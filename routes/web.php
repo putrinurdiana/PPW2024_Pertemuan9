@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginRegisterController;
+use App\Http\Controllers\GaleryController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
@@ -91,3 +92,5 @@ Route::controller(LoginRegisterController::class)->group(function() {
 Route::middleware('auth')->group(function() {
     Route::resource('/buku', BukuController::class);
 });
+
+Route::resource('gallery', GaleryController::class);
