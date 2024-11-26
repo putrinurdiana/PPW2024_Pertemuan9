@@ -9,8 +9,39 @@ use Illuminate\Support\Facades\Storage;
 class GaleryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/gallery",
+     *     tags={"Gallery"},
+     *     summary="Fetch gallery posts",
+     *     description="Menampilkan daftar postingan dengan gambar",
+     *     operationId="getGallery",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Berhasil menampilkan data",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="title", type="string", example="Judul Postingan"),
+     *                 @OA\Property(property="picture", type="string", example="url_gambar.jpg")
+     *             )
+     *         )
+     *     )
+     * )
      */
+    public function api()
+    {
+        $galleries = Post::where('picture', '!=', '')
+            ->whereNotNull('picture')
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $galleries
+        ]);
+    }
+
     public function index()
     {
         $data = array(
@@ -21,9 +52,6 @@ class GaleryController extends Controller
         return view('gallery.index')->with($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('gallery.create');
@@ -40,38 +68,26 @@ class GaleryController extends Controller
             'picture' => 'image|nullable|max:1999'
         ]);
     
+        // Handle image upload if present
         if ($request->hasFile('picture')) {
             $filenameWithExt = $request->file('picture')->getClientOriginalName();
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('picture')->getClientOriginalExtension();
             $basename = uniqid() . '_' . time();
-            $smallFilename = "small_{$basename}.{$extension}";
-            $mediumFilename = "medium_{$basename}.{$extension}";
-            $largeFilename = "large_{$basename}.{$extension}";
             $filenameSimpan = "{$basename}.{$extension}";
-            $path = $request->file('picture')->storeAs('posts_image', $filenameSimpan);
+            $path = $request->file('picture')->storeAs('public/posts_image', $filenameSimpan); // Store in storage/app/public
         } else {
-            $filenameSimpan = 'noimage.png';
+            $filenameSimpan = 'noimage.png'; // Default image if no file uploaded
         }
     
-        // dd($request->input());
+        // Create new post
         $post = new Post;
         $post->picture = $filenameSimpan;
-        $post->tittle = $request->input('title');
+        $post->title = $request->input('title'); // Fixed typo
         $post->description = $request->input('description');
         $post->save();
     
         return redirect('gallery')->with('success', 'Berhasil menambahkan data baru');
-    }
-                
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -80,7 +96,7 @@ class GaleryController extends Controller
     public function edit(string $id)
     {
         $gallery = Post::findOrFail($id);
-    return view('gallery.edit', compact('gallery'));
+        return view('gallery.edit', compact('gallery'));
     }
 
     /**
@@ -103,17 +119,18 @@ class GaleryController extends Controller
                 Storage::delete('public/posts_image/' . $gallery->picture);
             }
     
+            // Save the new picture
             $filenameWithExt = $request->file('picture')->getClientOriginalName();
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('picture')->getClientOriginalExtension();
             $filenameSimpan = uniqid() . '_' . time() . '.' . $extension;
-            $request->file('picture')->storeAs('posts_image', $filenameSimpan);
+            $request->file('picture')->storeAs('public/posts_image', $filenameSimpan);
     
             $gallery->picture = $filenameSimpan;
         }
     
         // Update other fields
-        $gallery->tittle = $request->input('title');
+        $gallery->title = $request->input('title'); // Fixed typo
         $gallery->description = $request->input('description');
         $gallery->save();
     
@@ -127,14 +144,14 @@ class GaleryController extends Controller
     {
         $gallery = Post::findOrFail($id);
 
-    // Hapus gambar dari penyimpanan
-    if ($gallery->picture && $gallery->picture != 'noimage.png') {
-        Storage::delete('public/posts_image/' . $gallery->picture);
-    }
+        // Hapus gambar dari penyimpanan
+        if ($gallery->picture && $gallery->picture != 'noimage.png') {
+            Storage::delete('public/posts_image/' . $gallery->picture);
+        }
 
-    // Hapus data dari database
-    $gallery->delete();
+        // Hapus data dari database
+        $gallery->delete();
 
-    return redirect()->route('gallery.index')->with('success', 'Gambar berhasil dihapus');
+        return redirect()->route('gallery.index')->with('success', 'Gambar berhasil dihapus');
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\GaleryController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SendEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BukuController;
@@ -94,3 +95,10 @@ Route::middleware('auth')->group(function() {
 });
 
 Route::resource('gallery', GaleryController::class);
+
+Route::get('/send-email', [SendEmailController::class, 'index'])->name('kirim-email');
+
+Route::post('/post-email', [SendEmailController::class, 'store'])->name('post-email');
+
+Route::get('/register', [LoginRegisterController::class, 'register'])->name('register');
+Route::post('/register', [LoginRegisterController::class, 'store'])->name('store');
