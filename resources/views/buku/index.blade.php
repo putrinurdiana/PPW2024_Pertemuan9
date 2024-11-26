@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-<expected_hash>" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-<expected_hash>" crossorigin="anonymous"></script>
+
     <title>Dashboard - Laravel 10 Custom User Registration & Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 <body>
 
@@ -49,7 +50,7 @@
             </ul>
           </div>
         </div>
-    </nav>    
+    </nav>   
 
     <div class="container mt-5">
         <h1 class="text-center">List Buku Favorit</h1> <!-- Centered heading -->
@@ -67,6 +68,7 @@
                     <th>Penulis</th>
                     <th>Harga</th>
                     <th>Tanggal Terbit</th>
+                    <th>Photo</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -77,7 +79,15 @@
                         <td>{{ $buku->judul }}</td>
                         <td>{{ $buku->penulis }}</td>
                         <td>{{ "Rp. ".number_format($buku->harga, 2, ',', '.') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($buku->tgl_terbit)->format('D/M/Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($buku->tgl_terbit)->format('d/M/Y') }}</td>
+                        <td>
+                            @if($buku->photo)
+                                <img src="{{ asset('storage/' . $buku->photo) }}"  width="54">
+                            @else
+                                <span>Tidak ada foto</span>
+                            @endif
+                        </td>
+
                         <td>
                             <div class="action-buttons">
                                 <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" style="display:inline;">
@@ -86,11 +96,7 @@
                                     <button onclick="return confirm('Yakin mau di hapus?')" type="submit" class="btn btn-danger">Hapus</button>
                                 </form>
 
-                                <form action="{{ route('buku.edit', $buku->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('GET') <!-- Change method to GET for edit -->
-                                    <button type="submit" onclick="return confirm('Yakin mau melanjutkan update?')" class="btn btn-warning">Update</button>
-                                </form>
+                                <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-warning" onclick="return confirm('Yakin mau melanjutkan update?')">Update</a>
                             </div>
                         </td>
                     </tr>
@@ -98,7 +104,6 @@
             </tbody>
         </table>
     </div>
-       
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>    
+        
 </body>
 </html>

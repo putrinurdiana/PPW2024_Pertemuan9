@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 // memanggil code 
 use App\Models\Buku;
+use Illuminate\Support\Facades\Storage;
 
 class BukuController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
     public function index (){
         $data_buku = Buku::all();
         // Kirim data ke view
@@ -20,11 +25,30 @@ class BukuController extends Controller
         return view('buku.create', compact('data_buku'));
     }
     public function store(Request $request){
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'penulis' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+            'tgl_terbit' => 'required|date',
+            'photo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048', // Validasi ukuran dan format file
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $filenameWithExt = $request->file(key: 'photo')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('photo')->getClientOriginalExtension();
+            $filenameSimpan = $filename . '_' . time() . '.' . $extension;
+            $path = $request->file('photo')->storeAs('photos', $filenameSimpan, 'public');
+        }
+    
+
         $buku = new Buku();
         $buku->judul = $request->judul;
         $buku->penulis = $request->penulis;
         $buku->harga = $request->harga;
         $buku->tgl_terbit = $request->tgl_terbit;
+        $buku->photo = $path ?? null;
+
         $buku->save();
         return redirect('/buku');
     }
@@ -40,19 +64,35 @@ class BukuController extends Controller
         // fungsi compact untuk mengirim data buku ke view
         return view('/buku.edit', compact('buku'));
     }
-    public function update(Request $request, $id) {
-        $buku = Buku::find($id);
+    public function update(Request $request, $id)
+{
+    $buku = Buku::findOrFail($id);
+    
+    $buku->judul = $request->judul;
+    $buku->penulis = $request->penulis;
+    $buku->harga = $request->harga;
+    $buku->tgl_terbit = $request->tgl_terbit;
 
-        // Update field yang ada berdasarkan input dari form
-        $buku->judul = $request->judul;
-        $buku->penulis = $request->penulis;
-        $buku->harga = $request->harga;
-        $buku->tgl_terbit = $request->tgl_terbit;
- 
-        $buku->save();
+    if ($request->hasFile('photo')) {
+        // Delete old photo if it exists
+        if ($buku->photo && file_exists(public_path('storage/'.$buku->photo))) {
+            unlink(public_path('storage/'.$buku->photo));
+        }
 
-        return redirect('/buku');
+        // Store new photo
+        $filenameWithExt = $request->file(key: 'photo')->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $request->file('photo')->getClientOriginalExtension();
+        $filenameSimpan = $filename . '_' . time() . '.' . $extension;
+        $buku->photo = $request->file('photo')->storeAs('photos', $filenameSimpan, 'public');
     }
+
+    $buku->save();
+
+    return redirect()->route('buku.index')->with('success', 'Buku updated successfully');
+}
+
+    
     
     
 }

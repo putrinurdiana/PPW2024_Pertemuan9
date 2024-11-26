@@ -11,12 +11,18 @@
                     <div class="alert alert-success">
                         {{ $message }}
                     </div>
+                @elseif ($message = Session::get('error'))
+                    <div class="alert alert-error">
+                            {{ $message }}
+                    </div>
                 @else
                     <div class="alert alert-success">
                         You are logged in!
                     </div>       
-                @endif                
+                @endif    
+                <a href="{{route('buku.index')}}" class="btn btn-primary">Book</a>            
             </div>
+            
         </div>
     </div>    
 </div>

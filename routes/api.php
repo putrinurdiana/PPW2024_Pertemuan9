@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+use App\Http\Controllers\InfoController;
+Route::get('/info', [InfoController::class, 'index'])->name('info');
+
+use App\Http\Controllers\GreetController;
+Route::get('/greet', [GreetController::class, 'greet'])->name('greet');
+
+use App\Http\Controllers\GaleryController;
+Route::get('/gallery', [GaleryController::class, 'api']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
